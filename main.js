@@ -1,0 +1,249 @@
+import {
+	ClassicEditor,
+	AccessibilityHelp,
+	Autoformat,
+	AutoImage,
+	Autosave,
+	BlockQuote,
+	Bold,
+	CloudServices,
+	Essentials,
+	FullPage,
+	GeneralHtmlSupport,
+	Heading,
+	HtmlComment,
+	HtmlEmbed,
+	ImageBlock,
+	ImageCaption,
+	ImageInline,
+	ImageInsertViaUrl,
+	Font,
+	ImageResize,
+	ImageStyle,
+	ImageTextAlternative,
+	ImageToolbar,
+	ImageUpload,
+	Indent,
+	IndentBlock,
+	Italic,
+	Link,
+	LinkImage,
+	List,
+	ListProperties,
+	MediaEmbed,
+	Paragraph,
+	PasteFromOffice,
+	SelectAll,
+	ShowBlocks,
+	SourceEditing,
+	Table,
+	TableCaption,
+	TableCellProperties,
+	TableColumnResize,
+	TableProperties,
+	TableToolbar,
+	TextTransformation,
+	TodoList,
+	Underline,
+	Widget,
+	Undo, 
+	Editor
+} from 'ckeditor5';
+
+import translations from 'ckeditor5/translations/ru.js';
+import ClassAttribute from './custom-plugins/class-attribute-plugin';
+import SimpleBox from './custom-plugins/simple-box/simple-box';
+import HtmlInsertPluginDr from './custom-plugins/html-insert/html-insert-plugin';
+import DivPlugin from './custom-plugins/html-insert/div-plugin';
+import ExtendHTMLSupport from './custom-plugins/html-support/extend-html-support';
+
+import 'ckeditor5/ckeditor5.css';
+
+import './style.css';
+
+const editorConfig = {
+	toolbar: {
+		items: [
+			'undo',
+			'redo',
+			'|',
+			'sourceEditing',
+			'showBlocks',
+			'|',
+			'heading',
+			'|',
+			'bold',
+			'italic',
+			'underline',
+			'|',
+			'link',
+			'mediaEmbed',
+			'insertTable',
+			'blockQuote',
+			'htmlEmbed',
+			'|',
+			'bulletedList',
+			'numberedList',
+			'todoList',
+			'outdent',
+			'indent',
+			'|',
+			'контейнеры',
+			'insertDiv',
+			'|',
+			'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor',
+		],
+		shouldNotGroupWhenFull: false
+	},
+	plugins: [
+		AccessibilityHelp,
+		HtmlInsertPluginDr,
+		ExtendHTMLSupport,
+		Autoformat,
+		ClassAttribute,
+		AutoImage,
+		SimpleBox,
+		Autosave,
+		BlockQuote,
+		Bold,
+		DivPlugin,
+		Widget,
+		CloudServices,
+		Essentials,
+		FullPage,
+		GeneralHtmlSupport,
+		Heading,
+		HtmlComment,
+		Font,
+		HtmlEmbed,
+		ImageBlock,
+		ImageCaption,
+		ImageInline,
+		ImageInsertViaUrl,
+		ImageResize,
+		ImageStyle,
+		ImageTextAlternative,
+		ImageToolbar,
+		ImageUpload,
+		Indent,
+		IndentBlock,
+		Italic,
+		Link,
+		LinkImage,
+		List,
+		ListProperties,
+		MediaEmbed,
+		Paragraph,
+		PasteFromOffice,
+		SelectAll,
+		ShowBlocks,
+		SourceEditing,
+		Table,
+		TableCaption,
+		TableCellProperties,
+		TableColumnResize,
+		TableProperties,
+		TableToolbar,
+		TextTransformation,
+		TodoList,
+		Underline,
+		Undo
+	],
+	heading: {
+		options: [
+			{
+				model: 'paragraph',
+				title: 'Paragraph',
+				class: 'ck-heading_paragraph'
+			},
+			{
+				model: 'heading1',
+				view: 'h1',
+				title: 'Heading 1',
+				class: 'ck-heading_heading1'
+			},
+			{
+				model: 'heading2',
+				view: 'h2',
+				title: 'Heading 2',
+				class: 'ck-heading_heading2'
+			},
+			{
+				model: 'heading3',
+				view: 'h3',
+				title: 'Heading 3',
+				class: 'ck-heading_heading3'
+			},
+			{
+				model: 'heading4',
+				view: 'h4',
+				title: 'Heading 4',
+				class: 'ck-heading_heading4'
+			},
+			{
+				model: 'heading5',
+				view: 'h5',
+				title: 'Heading 5',
+				class: 'ck-heading_heading5'
+			},
+			{
+				model: 'heading6',
+				view: 'h6',
+				title: 'Heading 6',
+				class: 'ck-heading_heading6'
+			}
+		]
+	},
+	htmlSupport: {
+		allow: [
+			{
+				name: /.*/,
+				styles: true,
+				attributes: true,
+				classes: true
+			}
+		]
+	},
+	image: {
+		toolbar: [
+			'toggleImageCaption',
+			'imageTextAlternative',
+			'|',
+			'imageStyle:inline',
+			'imageStyle:wrapText',
+			'imageStyle:breakText',
+			'|',
+			'resizeImage'
+		]
+	},
+	initialData:
+		'<html><head><title>Простая страница с инлайновыми стилями</title></head><body><div style="display: flex; justify-content: space-between; align-items: center; height: 100vh; background-color: #f2f2f2;"><div style="background-color: #4CAF50; padding: 20px; color: #fff;">Контент 1</div><div style="background-color: #3e8e41; padding: 20px; color: #fff;">Контент 2</div><div style="background-color: #2ecc71; padding: 20px; color: #fff;">Контент 3</div></div></body></html>',
+	language: 'ru',
+	link: {
+		addTargetToExternalLinks: true,
+		defaultProtocol: 'https://',
+		decorators: {
+			toggleDownloadable: {
+				mode: 'manual',
+				label: 'Downloadable',
+				attributes: {
+					download: 'file'
+				}
+			}
+		}
+	},
+	list: {
+		properties: {
+			styles: true,
+			startIndex: true,
+			reversed: true
+		}
+	},
+	placeholder: 'Type or paste your content here!',
+	table: {
+		contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells', 'tableProperties', 'tableCellProperties']
+	},
+	translations: [translations]
+};
+
+ClassicEditor.create(document.querySelector('#editor'), editorConfig);

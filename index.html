@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>CKEditor vanilla test</title>
+		<link rel="icon" type="image/png" href="https://ckeditor.com/assets/images/favicons/32x32.png" sizes="32x32">
+		<link rel="icon" type="image/png" href="https://ckeditor.com/assets/images/favicons/96x96.png" sizes="96x96">
+		<link rel="apple-touch-icon" type="image/png" href="https://ckeditor.com/assets/images/favicons/120x120.png" sizes="120x120">
+		<link rel="apple-touch-icon" type="image/png" href="https://ckeditor.com/assets/images/favicons/152x152.png" sizes="152x152">
+		<link rel="apple-touch-icon" type="image/png" href="https://ckeditor.com/assets/images/favicons/167x167.png" sizes="167x167">
+		<link rel="apple-touch-icon" type="image/png" href="https://ckeditor.com/assets/images/favicons/180x180.png" sizes="180x180">
+	</head>
+	<body>
+		<style>
+            .simple-box {
+                padding: 10px;
+
+                background: rgba( 0, 0, 0, 0.1 );
+                border: solid 1px hsl(0, 0%, 77%);
+                border-radius: 2px;
+				display: flex;
+				width: 100%;
+				gap: 20px;
+            }
+
+            .simple-box-title, .simple-box-description {
+                padding: 10px;
+                margin: 0;
+
+                background: #FFF;
+                border: solid 1px hsl(0, 0%, 77%);
+            }
+
+			.simple-box-title {
+				width: 30%;
+			}
+
+			.simple-box-description {
+				width: 70%;
+			}
+
+			.insertdiv {
+				height: 100px;
+				width: 100px;
+				background-color: black;
+			}
+        </style>
+		<div>
+			<div class="main-container">
+				<div class="editor-container editor-container_classic-editor" id="editor-container">
+					<div class="editor-container__editor"><div id="editor"></div></div>
+				</div>
+			</div>
+		</div>
+		<script type="module" src="./main.js"></script>
+	</body>
+</html>
