@@ -1,4 +1,4 @@
-import { ButtonView, Plugin, toWidget, Widget } from 'ckeditor5';
+import { ButtonView, Plugin, toWidget } from 'ckeditor5';
 
 export default class ProductCardPlugin extends Plugin {
     init() {
@@ -13,36 +13,17 @@ export default class ProductCardPlugin extends Plugin {
                 const position = editor.model.document.selection.getFirstPosition() || editor.model.document.getRoot().getChild(0);
 
                 editor.model.change(writer => {
-                    const widget = writer.createElement('productCard');
-                    writer.insert(widget, position);
-                    writer.append(writer.createElement('paragraph', { content: viewFragment }), widget);
+                    editor.model.insertContent(viewFragment, position);
                 });
             });
 
             return button;
         });
-
         this._defineConverters();
     }
 
     _defineConverters() {
         const editor = this.editor;
-
-        editor.conversion.for('upcast').elementToElement({
-            model: 'productCard',
-            view: {
-                name: 'div',
-                classes: 'main_div'
-            }
-        });
-
-        editor.conversion.for('downcast').elementToElement({
-            model: 'productCard',
-            view: {
-                name: 'div',
-                classes: 'main_div'
-            }
-        });
 
         editor.conversion.for('upcast').elementToElement({
             model: 'paragraph',
@@ -68,11 +49,5 @@ class InsertProductCardButton extends ButtonView {
             withText: true,
             tooltip: true
         });
-    }
-}
-
-class ProductCard extends Widget {
-    constructor(editor, element) {
-        super(editor, element);
     }
 }
