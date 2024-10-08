@@ -50,6 +50,16 @@ export default class DivPlugin extends Plugin {
             });
         });
 
+        editor.conversion.for('editingDowncast').add(dispatcher => {
+            dispatcher.on('attribute:style:resizableDiv', (evt, data, conversionApi) => {
+                const viewWriter = conversionApi.writer;
+                const viewElement = conversionApi.mapper.toViewElement(data.item);
+                if (viewElement) {
+                    viewWriter.setAttribute('style', data.attributeNewValue, viewElement);
+                }
+            });
+        });
+
         editor.conversion.for('editingDowncast').elementToElement({
             model: 'resizableDiv',
             view: (modelElement, { writer: viewWriter }) => {
@@ -61,33 +71,50 @@ export default class DivPlugin extends Plugin {
         
                 const widget = toWidget( div, viewWriter );
         
-                editor.plugins.get( 'WidgetResize' ).attachTo( {
+                editor.plugins.get('WidgetResize').attachTo({
                     unit: 'px',
                     modelElement: modelElement,
                     viewElement: widget,
                     editor,
-                    getResizeHost: () => editor.editing.view.domConverter.mapViewToDom( editor.editing.mapper.toViewElement( modelElement ) ),
-                    getHandleHost: ( domElement ) => domElement,
+                    getResizeHost: () => editor.editing.view.domConverter.mapViewToDom(editor.editing.mapper.toViewElement(modelElement)),
+                    getHandleHost: (domElement) => domElement,
                     isCentered: () => false,
-                } );
+                    onCommit: (newValue) => {
+                        const newSize = parseFloat(newValue);
+                        const currentStyle = modelElement.getAttribute('style') || '';
+                        const updatedStyle = currentStyle.replace(/width:\s*\d+px/, `width: ${newSize}px`);
+                        console.log('New value:', newValue);
+                        editor.execute('resizeDiv', {
+                            modelElement: modelElement,
+                            newSize: { width: newSize }
+                        });
+                    }
+                });
         
                 return widget;
             }
         } );
 
 
-        editor.commands.add( 'resizeDiv', {
-            execute: ( { modelElement, newSize } ) => {
-                console.log('Model element:', modelElement);
-                console.log('New size:', newSize);
-                editor.model.change( writer => {
-                    const currentStyle = modelElement.getAttribute( 'style' ) || '';
-                    const updatedStyle = `width: ${newSize.width}px; height: ${newSize.height}px; border: 1px solid black;`;
-                    console.log(newSize.width, newSize.height)
-                    writer.setAttribute( 'style', updatedStyle, modelElement );
-                } );
+        editor.commands.add('resizeDiv', {
+            execute: ({ modelElement, newSize }) => {
+                const currentStyle = modelElement.getAttribute('style') || '';
+                let updatedStyle = currentStyle;
+        
+                if (newSize.width !== undefined) {
+                    updatedStyle = updatedStyle.replace(/width:\s*\d+px/, `width: ${newSize.width}px`);
+                }
+                if (newSize.height !== undefined) {
+                    updatedStyle = updatedStyle.replace(/height:\s*\d+px/, `height: ${newSize.height}px`);
+                }
+        
+                console.log('Final updated style:', updatedStyle);
+        
+                editor.model.change(writer => {
+                    writer.setAttribute('style', updatedStyle, modelElement);
+                });
             }
-        } );
+        });
 
         editor.ui.componentFactory.add( 'insertDiv', locale => {
             const view = new ButtonView( locale );

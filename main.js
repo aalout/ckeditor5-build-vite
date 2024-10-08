@@ -51,15 +51,19 @@ import {
 } from 'ckeditor5';
 
 import translations from 'ckeditor5/translations/ru.js';
-import ClassAttribute from './custom-plugins/class-attribute-plugin';
+// import ClassAttribute from './custom-plugins/class-attribute-plugin';
 import SimpleBox from './custom-plugins/simple-box/simple-box';
-import HtmlInsertPluginDr from './custom-plugins/html-insert/html-insert-plugin';
+// import HtmlInsertPluginDr from './custom-plugins/html-insert/html-insert-plugin';
 import DivPlugin from './custom-plugins/html-insert/div-plugin';
-import ExtendHTMLSupport from './custom-plugins/html-support/extend-html-support';
+// import ExtendHTMLSupport from './custom-plugins/html-support/extend-html-support';
+// import Widget from './custom-plugins/widgets/widget-comment-plugin';
+import ProductCardPlugin from './custom-plugins/product-test/product-test-plugin';
 
 import 'ckeditor5/ckeditor5.css';
 
 import './style.css';
+
+const htmlCode = '<div className={styles.main_div}><div className={styles.product_card}><div className={styles.product_card_flex_1}><p>Следует отметить, что реализация намеченных плановых заданий способствует подготовке и реализации модели развития. Учитывая ключевые сценарии поведения, высокое качество позиционных исследований требует от нас анализа инновационных методов управления процессами. Но новая модель организационной деятельности является качественно новой ступенью переосмысления внешнеэкономических политик.</p><div className={styles.logo}></div></div><div className={styles.bottom_div}><div className={styles.person_div}><div className={styles.person}></div>{props.content}</div><div className={styles.arrow}></div></div></div></div>'
 
 const editorConfig = {
 	toolbar: {
@@ -90,6 +94,7 @@ const editorConfig = {
 			'|',
 			'контейнеры',
 			'insertDiv',
+			'InsertProductCardButton',
 			'|',
 			'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor',
 		],
@@ -97,10 +102,10 @@ const editorConfig = {
 	},
 	plugins: [
 		AccessibilityHelp,
-		HtmlInsertPluginDr,
-		ExtendHTMLSupport,
+		// HtmlInsertPluginDr,
+		// ExtendHTMLSupport,
 		Autoformat,
-		ClassAttribute,
+		// ClassAttribute,
 		AutoImage,
 		SimpleBox,
 		Autosave,
@@ -113,6 +118,8 @@ const editorConfig = {
 		FullPage,
 		GeneralHtmlSupport,
 		Heading,
+		// WidgetPlugin,
+		ProductCardPlugin,
 		HtmlComment,
 		Font,
 		HtmlEmbed,
@@ -217,7 +224,8 @@ const editorConfig = {
 		]
 	},
 	initialData:
-		'<html><head><title>Простая страница с инлайновыми стилями</title></head><body><div style="display: flex; justify-content: space-between; align-items: center; height: 100vh; background-color: #f2f2f2;"><div style="background-color: #4CAF50; padding: 20px; color: #fff;">Контент 1</div><div style="background-color: #3e8e41; padding: 20px; color: #fff;">Контент 2</div><div style="background-color: #2ecc71; padding: 20px; color: #fff;">Контент 3</div></div></body></html>',
+	'',
+		// '<html><head><title>Простая страница с инлайновыми стилями</title></head><body><div style="display: flex; justify-content: space-between; align-items: center; height: 100vh; background-color: #f2f2f2;"><div style="background-color: #4CAF50; padding: 20px; color: #fff;">Контент 1</div><div style="background-color: #3e8e41; padding: 20px; color: #fff;">Контент 2</div><div style="background-color: #2ecc71; padding: 20px; color: #fff;">Контент 3</div></div></body></html>',
 	language: 'ru',
 	link: {
 		addTargetToExternalLinks: true,
