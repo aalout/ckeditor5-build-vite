@@ -58,6 +58,7 @@ import DivPlugin from './custom-plugins/html-insert/div-plugin';
 // import ExtendHTMLSupport from './custom-plugins/html-support/extend-html-support';
 // import Widget from './custom-plugins/widgets/widget-comment-plugin';
 import ProductCardPlugin from './custom-plugins/product-test/product-test-plugin';
+import GridPlugin from './custom-plugins/grid-plugin/grid-plugin';
 
 import 'ckeditor5/ckeditor5.css';
 
@@ -95,6 +96,7 @@ const editorConfig = {
 			'контейнеры',
 			'insertDiv',
 			'InsertProductCardButton',
+			'InsertGridRowButton',
 			'|',
 			'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor',
 		],
@@ -105,6 +107,7 @@ const editorConfig = {
 		// HtmlInsertPluginDr,
 		// ExtendHTMLSupport,
 		Autoformat,
+		GridPlugin,
 		// ClassAttribute,
 		AutoImage,
 		SimpleBox,

@@ -57,7 +57,6 @@ export default class ProductCardPlugin extends Plugin {
     _defineConverters() {
         const conversion = this.editor.conversion;
 
-        // Upcast converter
         conversion.for('upcast').elementToElement({
             model: 'productCard',
             view: {
@@ -66,7 +65,6 @@ export default class ProductCardPlugin extends Plugin {
             }
         });
 
-        // Downcast converter
         conversion.for('downcast').elementToElement({
             model: 'productCard',
             view: (modelElement, { writer: viewWriter }) => {
