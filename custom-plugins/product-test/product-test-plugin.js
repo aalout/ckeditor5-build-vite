@@ -50,7 +50,8 @@ export default class ProductCardPlugin extends Plugin {
         schema.register('productCard', {
             isObject: true,
             allowWhere: '$block',
-            allowContentOf: '$root'
+            allowContentOf: '$root',
+            allowIn: 'gridCell'
         });
     }
 
@@ -69,7 +70,7 @@ export default class ProductCardPlugin extends Plugin {
             model: 'productCard',
             view: (modelElement, { writer: viewWriter }) => {
                 const div = viewWriter.createContainerElement('div', { class: 'widget-container' });
-                return toWidget(div, viewWriter, { label: 'product card widget' });
+                return toWidgetEditable(div, viewWriter, { label: 'product card widget' });
             }
         });
     }

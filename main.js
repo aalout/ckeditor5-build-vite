@@ -227,7 +227,110 @@ const editorConfig = {
 		]
 	},
 	initialData:
-	'',
+	`<div class="grid-row">
+    <div class="grid-cell ck-editor__editable ck-editor__nested-editable" style="flex:12;" role="textbox" tabindex="-1" contenteditable="true" colspan="12">
+        <div class="widget-container ck-editor__editable ck-editor__nested-editable" role="textbox" tabindex="-1" aria-label="product card widget" contenteditable="true">
+            <div class="widget-container ck-editor__editable ck-editor__nested-editable" role="textbox" tabindex="-1" aria-label="product card widget" contenteditable="true">
+                <div class="main_div">
+                    <div class="product_card">
+                        <div class="product_card_flex_1">
+                            <p>
+                                Задача организации, в особенности же постоянное информационно-пропагандистское обеспечение нашей деятельности требует определения и уточнения экономической целесообразности принимаемых решений! Идейные соображения высшего порядка, а также постоянный количественный рост и сфера нашей активности, в своём классическом представлении, допускает внедрение экономической целесообразности принимаемых решений. В частности, граница обучения кадров создаёт необходимость включения в производственный план целого ряда внеочередных мероприятий с учётом комплекса прогресса профессионального сообщества.
+                            </p>
+                            <div class="logo">
+                                &nbsp;
+                            </div>
+                        </div>
+                        <div class="bottom_div">
+                            <div class="person_div">
+                                <div class="person">
+                                    &nbsp;
+                                </div>
+                                <p>
+                                    Ваня Иванов
+                                </p>
+                            </div>
+                            <div class="arrow">
+                                &nbsp;
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="grid-cell ck-editor__editable ck-editor__nested-editable" style="flex:12;" role="textbox" tabindex="-1" contenteditable="true" colspan="12">
+        <div class="widget-container ck-editor__editable ck-editor__nested-editable" role="textbox" tabindex="-1" aria-label="product card widget" contenteditable="true">
+            <div class="widget-container ck-editor__editable ck-editor__nested-editable" role="textbox" tabindex="-1" aria-label="product card widget" contenteditable="true">
+                <div class="main_div">
+                    <div class="product_card">
+                        <div class="product_card_flex_1">
+                            <p>
+                                Гойда
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="grid-cell ck-editor__editable ck-editor__nested-editable" style="flex:12;" role="textbox" tabindex="-1" contenteditable="true" colspan="12">
+        <span style="background-color:hsl(180, 75%, 60%);font-family:'Courier New', Courier, monospace;"><strong>Здесь контент какой-то</strong></span><span style="background-color:hsl(180,75%,60%);font-family:'Courier New', Courier, monospace;"><strong>Здесь контент какой-тоЗдесь контент какой-тоЗдесь контент какой-тоЗдесь контент какой-тоЗдесь контент какой-тоЗдесь контент какой-тоЗдесь контент какой-тоЗдесь контент какой-тоЗдесь контент какой-тоЗдесь контент какой-тоЗдесь контент какой-тоЗдесь контент какой-тоЗдесь контент какой-тоЗдесь контент какой-тоЗдесь контент какой-тоЗдесь контент какой-тоЗдесь контент какой-тоЗдесь контент какой-тоЗдесь контент какой-тоЗдесь контент какой-тоЗдесь контент какой-тоЗдесь контент какой-тоЗдесь контент какой-тоЗдесь контент какой-тоЗдесь контент какой-тоЗдесь контент какой-тоЗдесь контент какой-тоЗдесь контент какой-тоЗдесь контент какой-тоЗдесь контент какой-тоЗдесь контент какой-тоЗдесь контент какой-тоЗдесь контент какой-тоЗдесь контент какой-тоЗдесь контент какой-тоЗдесь контент какой-тоЗдесь контент какой-тоЗдесь контент какой-тоЗдесь контент какой-тоЗдесь контент какой-тоЗдесь контент какой-тоЗдесь контент какой-тоЗдесь контент какой-тоЗдесь контент какой-тоЗдесь контент какой-тоЗдесь контент какой-тоЗдесь контент какой-тоЗдесь контент какой-тоЗдесь контент какой-тоЗдесь контент какой-тоЗдесь контент какой-тоЗдесь контент какой-тоЗдесь контент какой-то</strong></span>
+    </div>
+    <div class="grid-cell ck-editor__editable ck-editor__nested-editable" style="flex:12;" role="textbox" tabindex="-1" contenteditable="true" colspan="12">
+        <div class="widget-container ck-editor__editable ck-editor__nested-editable" role="textbox" tabindex="-1" aria-label="product card widget" contenteditable="true">
+            <div class="widget-container ck-editor__editable ck-editor__nested-editable" role="textbox" tabindex="-1" aria-label="product card widget" contenteditable="true">
+                <div class="main_div">
+                    <div class="product_card">
+                        <div class="product_card_flex_1">
+                            <p>
+                                &nbsp;
+                            </p>
+                            <div class="logo">
+                                &nbsp;
+                            </div>
+                        </div>
+                        <div class="bottom_div">
+                            <div class="person_div">
+                                <p>
+                                    Ваня Иванов
+                                </p>
+                            </div>
+                            <div class="arrow">
+                                &nbsp;
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="grid-cell ck-editor__editable ck-editor__nested-editable" style="flex:12;" role="textbox" tabindex="-1" contenteditable="true" colspan="12">
+        <div class="widget-container ck-editor__editable ck-editor__nested-editable" role="textbox" tabindex="-1" aria-label="product card widget" contenteditable="true">
+            <div class="widget-container ck-editor__editable ck-editor__nested-editable" role="textbox" tabindex="-1" aria-label="product card widget" contenteditable="true">
+                <div class="main_div">
+                    <div class="product_card">
+                        <div class="product_card_flex_1">
+                            <section class="simple-box">
+                                <h1 class="simple-box-title">
+                                    <span style="background-color:hsl(180, 75%, 60%);">аааакуакуаукаук</span>
+                                </h1>
+                                <div class="simple-box-description">
+                                    <p>
+                                        <span style="background-color:hsl(0, 0%, 0%);">ааааа</span>
+                                    </p>
+                                </div>
+                            </section>
+                            <p>
+                                &nbsp;
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>`,
 		// '<html><head><title>Простая страница с инлайновыми стилями</title></head><body><div style="display: flex; justify-content: space-between; align-items: center; height: 100vh; background-color: #f2f2f2;"><div style="background-color: #4CAF50; padding: 20px; color: #fff;">Контент 1</div><div style="background-color: #3e8e41; padding: 20px; color: #fff;">Контент 2</div><div style="background-color: #2ecc71; padding: 20px; color: #fff;">Контент 3</div></div></body></html>',
 	language: 'ru',
 	link: {

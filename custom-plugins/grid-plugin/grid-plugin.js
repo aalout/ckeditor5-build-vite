@@ -10,7 +10,7 @@ export default class GridPlugin extends Plugin {
     });
 
     editor.model.schema.register('gridCell', {
-      isLimit: true,
+      isLimit: false,
       allowIn: 'gridRow',
       allowContentOf: '$block',
       allowAttributes: ['colspan']
@@ -20,7 +20,7 @@ export default class GridPlugin extends Plugin {
       const button = new ButtonView(locale);
 
       button.set({
-        label: 'Insert Grid Row',
+        label: 'Вставить грид',
         withText: true
       });
 
