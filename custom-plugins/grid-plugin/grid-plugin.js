@@ -8,6 +8,7 @@ import {
 } from "ckeditor5";
 import ChangeCellColorCommand from "./gridCell-color-change";
 
+// Создание balloon context
 class SimpleFormView extends View {
     constructor(locale) {
         super(locale);
@@ -26,6 +27,9 @@ class SimpleFormView extends View {
         });
     }
 
+    // Создание кнопок в balloon context
+
+    // Кнопка добавления колонки
     _createAddColumnButton() {
         const button = new ButtonView();
 
@@ -42,6 +46,7 @@ class SimpleFormView extends View {
         return button;
     }
 
+    // Кнопка изменения цвета ячейки
     _createColorChangeButton() {
         const button = new ButtonView();
 
@@ -58,6 +63,7 @@ class SimpleFormView extends View {
         return button;
     }
 
+    // Кнопка добавления строки
     _createAddRowButton() {
         const button = new ButtonView();
 
@@ -75,6 +81,7 @@ class SimpleFormView extends View {
     }
 }
 
+// Сам грид
 export default class GridPlugin extends Plugin {
     static get requires() {
         return [ContextualBalloon];
@@ -85,6 +92,7 @@ export default class GridPlugin extends Plugin {
         this._balloon = this.editor.plugins.get(ContextualBalloon);
         this.formView = this._createFormView();
 
+        // _defineSchema
         editor.model.schema.register("gridRow", {
             isObject: true,
             allowWhere: "$block",
@@ -102,6 +110,7 @@ export default class GridPlugin extends Plugin {
             new ChangeCellColorCommand(editor)
         );
 
+        // Кнопка вставки этого плагина
         editor.ui.componentFactory.add("insertGridRowButton", (locale) => {
             const button = new ButtonView(locale);
 
@@ -132,10 +141,12 @@ export default class GridPlugin extends Plugin {
         this._setupListeners();
     }
 
+    // Даем понять balloon context`у понять, что если вставляем новую колонку, то вставляем ее справа от текущего gridCell, тоже самое с gridRow.
     _createFormView() {
         const editor = this.editor;
         const formView = new SimpleFormView(editor.locale);
 
+        // Добавить колонку
         this.listenTo(formView, "addColumn", () => {
             const selection = editor.model.document.selection;
             const position = selection.getFirstPosition();
@@ -153,6 +164,7 @@ export default class GridPlugin extends Plugin {
             this._hideUI();
         });
 
+        // Добавить строку
         this.listenTo(formView, "addRow", () => {
             const selection = editor.model.document.selection;
             const position = selection.getFirstPosition();
@@ -172,6 +184,7 @@ export default class GridPlugin extends Plugin {
             this._hideUI();
         });
 
+        // Изменить цвет
         this.listenTo(formView, "changeColor", () => {
             const command = editor.commands.get("changeCellColor");
             const color = prompt(
@@ -182,6 +195,7 @@ export default class GridPlugin extends Plugin {
             }
         });
 
+        // При аутсайд клике закрываем balloon
         clickOutsideHandler({
             emitter: formView,
             activator: () => this._balloon.visibleView === formView,
@@ -192,6 +206,7 @@ export default class GridPlugin extends Plugin {
         return formView;
     }
 
+    // Даем balloon context`y понять, где мы сейчас находимся, получаем родителя (gridCell)
     _setupListeners() {
         const editor = this.editor;
         const viewDocument = editor.editing.view.document;
@@ -208,6 +223,7 @@ export default class GridPlugin extends Plugin {
         });
     }
 
+    // Показываем балун
     _showUI() {
         if (this._balloon.hasView(this.formView)) {
             return;
@@ -219,12 +235,14 @@ export default class GridPlugin extends Plugin {
         });
     }
 
+    // Прячем балун
     _hideUI() {
         if (this._balloon.hasView(this.formView)) {
             this._balloon.remove(this.formView);
         }
     }
 
+    // Отображение балуна
     _getBalloonPositionData() {
         const view = this.editor.editing.view;
         const viewDocument = view.document;
@@ -237,9 +255,11 @@ export default class GridPlugin extends Plugin {
         };
     }
 
+    // Конвертеры в модель
     _defineConverters() {
         const conversion = this.editor.conversion;
 
+        // Апкаст для строки
         conversion.for("upcast").elementToElement({
             model: "gridRow",
             view: {
@@ -248,6 +268,7 @@ export default class GridPlugin extends Plugin {
             },
         });
 
+        // Даункаст для строки (строка - секция, колонки - дивы)
         conversion.for("downcast").elementToElement({
             model: "gridRow",
             view: (modelElement, { writer: viewWriter }) => {
@@ -257,6 +278,7 @@ export default class GridPlugin extends Plugin {
             },
         });
 
+        // Апкаст для колонки
         conversion.for("upcast").elementToElement({
             model: "gridCell",
             view: {
@@ -265,6 +287,7 @@ export default class GridPlugin extends Plugin {
             },
         });
 
+        // Даункаст для колонки со всеми модификациями и стилями
         conversion.for("downcast").elementToElement({
             model: "gridCell",
             view: (modelElement, { writer: viewWriter }) => {
@@ -279,6 +302,7 @@ export default class GridPlugin extends Plugin {
             },
         });
 
+        // Даункаст для стилей
         conversion.for("downcast").attributeToAttribute({
             model: "backgroundColor",
             view: (modelAttributeValue) => ({

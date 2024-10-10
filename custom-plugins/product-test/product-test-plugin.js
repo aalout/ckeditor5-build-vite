@@ -9,10 +9,13 @@ import {
 export default class ProductCardPlugin extends Plugin {
     init() {
         const editor = this.editor;
+
+        // Добавляем кнопку для запуска плагина
         editor.ui.componentFactory.add("InsertProductCardButton", (locale) => {
             const button = new InsertProductCardButton(locale);
 
             button.on("execute", () => {
+                // Переменная с кодом, которая в будущем будет передаваться с бека и будет динамической
                 const htmlCode = `
                             <div class="product_card">
                                 <div class="product_card_flex_1">
@@ -28,6 +31,7 @@ export default class ProductCardPlugin extends Plugin {
                                 </div>
                             </div>`;
 
+                // Парсим из хтмл в представление модели
                 const viewFragment = editor.data.parse(htmlCode);
                 const position =
                     editor.model.document.selection.getFirstPosition();
@@ -46,6 +50,7 @@ export default class ProductCardPlugin extends Plugin {
         this._defineConverters();
     }
 
+    // Регистрируем элемент в схеме модели как блок + разрешаем использование productCard внутри грида
     _defineSchema() {
         const schema = this.editor.model.schema;
 
@@ -57,6 +62,7 @@ export default class ProductCardPlugin extends Plugin {
         });
     }
 
+    // Конвертеры в модель и из нее
     _defineConverters() {
         const conversion = this.editor.conversion;
 
@@ -71,7 +77,7 @@ export default class ProductCardPlugin extends Plugin {
         conversion.for("downcast").elementToElement({
             model: "productCard",
             view: (modelElement, { writer: viewWriter }) => {
-                const div = viewWriter.createContainerElement("div", {
+                const div = viewWriter.createContainerElement("section", {
                     class: "widget-container",
                 });
                 return toWidget(div, viewWriter, {

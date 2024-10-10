@@ -1,5 +1,6 @@
 import { Command } from "ckeditor5";
 
+// Добавляем стиль bg color для родителя выбранного элемента
 export default class ChangeCellColorCommand extends Command {
     execute({ value }) {
         const editor = this.editor;
