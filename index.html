@@ -136,6 +136,39 @@
                 justify-content: space-between;
                 align-items: center;
             }
+
+            /* Кнопки переключения кода */
+
+            .button_code_change {
+                cursor: pointer;
+                letter-spacing: 2px;
+                text-transform: uppercase;
+                width: 160px;
+                height: 100px;
+                position: relative;
+                border: solid #777 2px;
+                color: #777;
+                z-index: 1;
+                transition: all 0.2s ease-in-out;
+                border-radius: 5px;
+                background: transparent;
+                padding: 0;
+            }
+
+            .button_code_change:hover {
+                border: solid rgb(184, 21, 21) 2px;
+                background-color: rgba(184, 21, 21, 0.2);
+            }
+
+            .selected {
+                border: solid rgb(255, 0, 0) 2px;
+            }
+
+            .button_code_container {
+                padding: 10px;
+                display: flex;
+                gap: 10px;
+            }
         </style>
         <div>
             <div class="main-container">
@@ -144,6 +177,26 @@
                     id="editor-container"
                 >
                     <div class="editor-container__editor">
+                        <div
+                            class="button_code_container"
+                            id="button-container"
+                        >
+                            <button class="button_code_change" id="button1">
+                                Установить код 1
+                            </button>
+                            <button class="button_code_change" id="button2">
+                                Установить код 2
+                            </button>
+                            <button class="button_code_change" id="button3">
+                                Установить код 3
+                            </button>
+                            <button class="button_code_change" id="button4">
+                                Установить код 4
+                            </button>
+                            <button class="button_code_change" id="button5">
+                                Установить код 5
+                            </button>
+                        </div>
                         <div id="editor"></div>
                     </div>
                 </div>

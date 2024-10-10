@@ -65,9 +65,6 @@ import "ckeditor5/ckeditor5.css";
 
 import "./style.css";
 
-const htmlCode =
-    "<div className={styles.main_div}><div className={styles.product_card}><div className={styles.product_card_flex_1}><p>Следует отметить, что реализация намеченных плановых заданий способствует подготовке и реализации модели развития. Учитывая ключевые сценарии поведения, высокое качество позиционных исследований требует от нас анализа инновационных методов управления процессами. Но новая модель организационной деятельности является качественно новой ступенью переосмысления внешнеэкономических политик.</p><div className={styles.logo}></div></div><div className={styles.bottom_div}><div className={styles.person_div}><div className={styles.person}></div>{props.content}</div><div className={styles.arrow}></div></div></div></div>";
-
 const editorConfig = {
     toolbar: {
         items: [

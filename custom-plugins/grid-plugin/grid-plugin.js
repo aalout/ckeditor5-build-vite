@@ -7,6 +7,7 @@ import {
     toWidgetEditable,
 } from "ckeditor5";
 import ChangeCellColorCommand from "./gridCell-color-change";
+import DeleteCellContentCommand from "./gridCell-content-delete";
 
 // Создание balloon context
 class SimpleFormView extends View {
@@ -16,6 +17,7 @@ class SimpleFormView extends View {
         this.addColumnButton = this._createAddColumnButton();
         this.addRowButton = this._createAddRowButton();
         this.changeColorButton = this._createColorChangeButton();
+        this.deleteCellContentButton = this._deleteCellContentButton();
 
         this.setTemplate({
             tag: "div",
@@ -23,12 +25,12 @@ class SimpleFormView extends View {
                 this.addColumnButton,
                 this.addRowButton,
                 this.changeColorButton,
+                this.deleteCellContentButton,
             ],
         });
     }
 
     // Создание кнопок в balloon context
-
     // Кнопка добавления колонки
     _createAddColumnButton() {
         const button = new ButtonView();
@@ -41,6 +43,23 @@ class SimpleFormView extends View {
 
         button.on("execute", () => {
             this.fire("addColumn");
+        });
+
+        return button;
+    }
+
+    // Кнопка удаления контента из ячейки
+    _deleteCellContentButton() {
+        const button = new ButtonView();
+
+        button.set({
+            label: "Удалить контент ячейки",
+            withText: true,
+            tooltip: true,
+        });
+
+        button.on("execute", () => {
+            this.fire("deleteCellContent");
         });
 
         return button;
@@ -108,6 +127,11 @@ export default class GridPlugin extends Plugin {
         editor.commands.add(
             "changeCellColor",
             new ChangeCellColorCommand(editor)
+        );
+
+        editor.commands.add(
+            "deleteCellContent",
+            new DeleteCellContentCommand(editor)
         );
 
         // Кнопка вставки этого плагина
@@ -193,6 +217,12 @@ export default class GridPlugin extends Plugin {
             if (color) {
                 editor.execute("changeCellColor", { value: color });
             }
+        });
+
+        // Удалить контент ячейки
+        this.listenTo(formView, "deleteCellContent", () => {
+            editor.execute("deleteCellContent");
+            this._hideUI();
         });
 
         // При аутсайд клике закрываем balloon
