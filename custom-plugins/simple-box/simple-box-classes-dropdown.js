@@ -1,4 +1,4 @@
-import { DialogView } from 'ckeditor5';
+import { DialogView } from "ckeditor5";
 
 export default class SimpleBoxClassesDialog extends DialogView {
     constructor(locale, editor) {
@@ -6,14 +6,14 @@ export default class SimpleBoxClassesDialog extends DialogView {
 
         this.editor = editor;
 
-        this.set('title', 'Редактировать классы');
-        this.set('className', 'simple-box-classes-dialog');
+        this.set("title", "Редактировать классы");
+        this.set("className", "simple-box-classes-dialog");
 
         this.createForm();
     }
 
     createForm() {
-        const form = this.formView = this.createFormView();
+        const form = (this.formView = this.createFormView());
 
         this.classesInput = this._createClassesInput();
         form.add(this.classesInput);
@@ -22,11 +22,11 @@ export default class SimpleBoxClassesDialog extends DialogView {
     _createClassesInput() {
         const input = new InputView(this.locale);
 
-        input.set('label', 'Классы');
+        input.set("label", "Классы");
         input.extendTemplate({
             attributes: {
-                class: 'simple-box-classes-input'
-            }
+                class: "simple-box-classes-input",
+            },
         });
 
         return input;
