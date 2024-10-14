@@ -124,18 +124,77 @@ class SimpleFormView extends View {
 export default class GridPlugin extends Plugin {
     updateFlexValues(gridRow, writer) {
         const cells = Array.from(gridRow.getChildren());
-        const flexValue = 12 / cells.length;
 
+        // Проверяем, есть ли объединенные ячейки
+        const anyMerged = cells.some((cell) => cell.hasAttribute("_isMerged"));
+
+        if (anyMerged) {
+            // Логика для объединенных ячеек
+            const totalColspan = cells.reduce(
+                (sum, cell) => sum + (cell.getAttribute("colspan") || 1),
+                0
+            );
+
+            if (totalColspan !== 12) {
+                console.warn(
+                    "Сумма colspan должна быть равна 12. Корректировка значений."
+                );
+
+                const scalingFactor = 12 / totalColspan;
+                const scaledColspans = cells.map(
+                    (cell) =>
+                        (cell.getAttribute("colspan") || 1) * scalingFactor
+                );
+
+                let roundedColspans = scaledColspans.map((value) =>
+                    Math.floor(value)
+                );
+                let remaining = 12 - roundedColspans.reduce((a, b) => a + b, 0);
+
+                const decimals = scaledColspans
+                    .map((value, idx) => ({
+                        idx,
+                        decimal: value - Math.floor(value),
+                    }))
+                    .sort((a, b) => b.decimal - a.decimal);
+
+                for (let i = 0; i < remaining; i++) {
+                    roundedColspans[decimals[i].idx]++;
+                }
+
+                // Устанавливаем скорректированные colspan
+                cells.forEach((cell, idx) => {
+                    writer.setAttribute("colspan", roundedColspans[idx], cell);
+                });
+            }
+        } else {
+            // Логика для распределения colspan равномерно
+            const count = cells.length;
+            let baseColspan = Math.floor(12 / count);
+            let remaining = 12 - baseColspan * count;
+            const colspans = cells.map(
+                (cell, idx) => baseColspan + (idx < remaining ? 1 : 0)
+            );
+            cells.forEach((cell, idx) => {
+                writer.setAttribute("colspan", colspans[idx], cell);
+            });
+        }
+
+        // Устанавливаем flex на основе текущего colspan
         cells.forEach((cell) => {
-            writer.setAttribute("colspan", flexValue, cell);
+            const colspan =
+                cell.getAttribute("colspan") || Math.floor(12 / cells.length);
+
             const viewElement = this.editor.editing.mapper.toViewElement(cell);
             if (viewElement) {
                 this.editor.editing.view.change((viewWriter) => {
-                    viewWriter.setStyle("flex", `${flexValue}`, viewElement);
+                    // Настраиваем flex на основе текущего colspan
+                    viewWriter.setStyle("flex", `${colspan}`, viewElement);
                 });
             }
         });
     }
+
     static get requires() {
         return [ContextualBalloon];
     }
@@ -190,6 +249,7 @@ export default class GridPlugin extends Plugin {
                         gridRow,
                         editor.model.document.selection.getFirstPosition()
                     );
+                    this.updateFlexValues(gridRow, writer);
                     this._showUI();
                 });
             });
@@ -214,6 +274,8 @@ export default class GridPlugin extends Plugin {
 
             if (direction) {
                 editor.execute("mergeCells", { direction });
+                // Удаляем неправильный вызов updateFlexValues с неопределенными переменными
+                // this.updateFlexValues(gridRow, writer);
             }
             this._hideUI();
         });
@@ -226,23 +288,14 @@ export default class GridPlugin extends Plugin {
 
             if (gridCell) {
                 editor.model.change((writer) => {
+                    const gridRow = gridCell.parent;
                     const newCell = writer.createElement("gridCell", {
-                        colspan: 12,
+                        colspan: 12, // Временно устанавливаем, корректировка произойдет в updateFlexValues
                     });
                     writer.insert(newCell, gridCell, "after");
 
-                    const gridRow = gridCell.parent;
+                    // Обновляем flex значения, что также скорректирует colspan
                     this.updateFlexValues(gridRow, writer);
-
-                    editor.editing.view.change((viewWriter) => {
-                        const viewElement =
-                            editor.editing.mapper.toViewElement(gridRow);
-                        viewWriter.setStyle(
-                            "flex",
-                            `${12 / gridRow.childCount}`,
-                            viewElement
-                        );
-                    });
                 });
             }
 
@@ -263,6 +316,7 @@ export default class GridPlugin extends Plugin {
                     });
                     writer.append(newGridCell, newGridRow);
                     writer.insert(newGridRow, gridRow, "after");
+                    this.updateFlexValues(newGridRow, writer);
                 });
             }
 
@@ -384,7 +438,8 @@ export default class GridPlugin extends Plugin {
             view: (modelElement, { writer: viewWriter }) => {
                 const colspan = modelElement.getAttribute("colspan") || 1;
                 const backgroundColor =
-                    modelElement.getAttribute("backgroundColor");
+                    modelElement.getAttribute("backgroundColor") ||
+                    "transparent";
                 const div = viewWriter.createEditableElement("div", {
                     class: "grid-cell",
                     style: `flex: ${colspan}; background-color: ${backgroundColor};`,
@@ -399,6 +454,15 @@ export default class GridPlugin extends Plugin {
             view: (modelAttributeValue) => ({
                 key: "style",
                 value: `background-color: ${modelAttributeValue};`,
+            }),
+        });
+
+        // Даункаст для атрибута colspan
+        conversion.for("downcast").attributeToAttribute({
+            model: "colspan",
+            view: (modelAttributeValue) => ({
+                key: "style",
+                value: `flex: ${modelAttributeValue};`,
             }),
         });
     }

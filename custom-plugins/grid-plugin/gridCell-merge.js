@@ -46,13 +46,18 @@ export default class MergeCellsCommand extends Command {
         // Получаем текущие colspan обоих ячеек
         const sourceColspan =
             sourceCell.getAttribute("colspan") ||
-            12 / sourceCell.parent.childCount;
+            Math.floor(12 / sourceCell.parent.childCount);
         const targetColspan =
             targetCell.getAttribute("colspan") ||
-            12 / targetCell.parent.childCount;
+            Math.floor(12 / targetCell.parent.childCount);
 
         // Увеличиваем colspan целевой ячейки
-        const newColspan = sourceColspan + targetColspan;
+        let newColspan = sourceColspan + targetColspan;
+
+        // Ограничиваем максимальный colspan до 12
+        if (newColspan > 12) {
+            newColspan = 12;
+        }
         writer.setAttribute("colspan", newColspan, targetCell);
 
         // Переносим содержимое из sourceCell в targetCell
@@ -63,5 +68,14 @@ export default class MergeCellsCommand extends Command {
 
         // Удаляем исходную ячейку
         writer.remove(sourceCell);
+
+        // Обновляем значения flex для всей строки
+        const gridRow = targetCell.parent;
+        const gridPlugin = this.editor.plugins.get("GridPlugin");
+        if (gridPlugin) {
+            gridPlugin.updateFlexValues(gridRow, writer);
+        } else {
+            console.error("GridPlugin не найден.");
+        }
     }
 }
