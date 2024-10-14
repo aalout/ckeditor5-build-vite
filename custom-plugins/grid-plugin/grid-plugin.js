@@ -8,6 +8,7 @@ import {
 } from "ckeditor5";
 import ChangeCellColorCommand from "./gridCell-color-change";
 import DeleteCellContentCommand from "./gridCell-content-delete";
+import MergeCellsCommand from "./gridCell-merge";
 
 // Создание balloon context
 class SimpleFormView extends View {
@@ -18,6 +19,7 @@ class SimpleFormView extends View {
         this.addRowButton = this._createAddRowButton();
         this.changeColorButton = this._createColorChangeButton();
         this.deleteCellContentButton = this._deleteCellContentButton();
+        this.createMergeCellButton = this._createMergeCellButton();
 
         this.setTemplate({
             tag: "div",
@@ -26,6 +28,7 @@ class SimpleFormView extends View {
                 this.addRowButton,
                 this.changeColorButton,
                 this.deleteCellContentButton,
+                this.createMergeCellButton,
             ],
         });
     }
@@ -98,10 +101,41 @@ class SimpleFormView extends View {
 
         return button;
     }
+
+    // Кнопка объединения ячеек
+    _createMergeCellButton() {
+        const button = new ButtonView();
+
+        button.set({
+            label: "Объединить ячейки",
+            withText: true,
+            tooltip: true,
+        });
+
+        button.on("execute", () => {
+            this.fire("mergeCells");
+        });
+
+        return button;
+    }
 }
 
 // Сам грид
 export default class GridPlugin extends Plugin {
+    updateFlexValues(gridRow, writer) {
+        const cells = Array.from(gridRow.getChildren());
+        const flexValue = 12 / cells.length;
+
+        cells.forEach((cell) => {
+            writer.setAttribute("colspan", flexValue, cell);
+            const viewElement = this.editor.editing.mapper.toViewElement(cell);
+            if (viewElement) {
+                this.editor.editing.view.change((viewWriter) => {
+                    viewWriter.setStyle("flex", `${flexValue}`, viewElement);
+                });
+            }
+        });
+    }
     static get requires() {
         return [ContextualBalloon];
     }
@@ -133,6 +167,8 @@ export default class GridPlugin extends Plugin {
             "deleteCellContent",
             new DeleteCellContentCommand(editor)
         );
+
+        editor.commands.add("mergeCells", new MergeCellsCommand(editor));
 
         // Кнопка вставки этого плагина
         editor.ui.componentFactory.add("insertGridRowButton", (locale) => {
@@ -170,6 +206,18 @@ export default class GridPlugin extends Plugin {
         const editor = this.editor;
         const formView = new SimpleFormView(editor.locale);
 
+        // Объединение ячеек
+        this.listenTo(formView, "mergeCells", () => {
+            const direction = prompt(
+                "Введите направление объединения (left, right, up, down):"
+            );
+
+            if (direction) {
+                editor.execute("mergeCells", { direction });
+            }
+            this._hideUI();
+        });
+
         // Добавить колонку
         this.listenTo(formView, "addColumn", () => {
             const selection = editor.model.document.selection;
@@ -182,6 +230,19 @@ export default class GridPlugin extends Plugin {
                         colspan: 12,
                     });
                     writer.insert(newCell, gridCell, "after");
+
+                    const gridRow = gridCell.parent;
+                    this.updateFlexValues(gridRow, writer);
+
+                    editor.editing.view.change((viewWriter) => {
+                        const viewElement =
+                            editor.editing.mapper.toViewElement(gridRow);
+                        viewWriter.setStyle(
+                            "flex",
+                            `${12 / gridRow.childCount}`,
+                            viewElement
+                        );
+                    });
                 });
             }
 

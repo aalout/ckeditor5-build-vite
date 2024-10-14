@@ -61,7 +61,6 @@
 
             .grid-cell {
                 box-sizing: border-box;
-                overflow: hidden;
             }
 
             /* Стили виджета комментария  */
@@ -83,6 +82,15 @@
                 max-width: 100%;
             }
 
+            .product_card1 {
+                background-color: #1c1c1f;
+                height: auto;
+                color: white;
+                padding: 60px;
+                max-width: 100%;
+                zoom: 25%;
+            }
+
             .product_card p {
                 font-size: 30px;
                 line-height: 60px;
@@ -92,6 +100,7 @@
             .product_card_flex_1 {
                 display: flex;
                 justify-content: space-between;
+                text-align: left;
             }
 
             .logo {
@@ -143,9 +152,8 @@
                 cursor: pointer;
                 letter-spacing: 2px;
                 text-transform: uppercase;
-                width: 160px;
+                width: 100%;
                 height: 100px;
-                position: relative;
                 border: solid #777 2px;
                 color: #777;
                 z-index: 1;
@@ -182,7 +190,40 @@
                             id="button-container"
                         >
                             <button class="button_code_change" id="button1">
-                                Установить код 1
+                                <div class="product_card1">
+                                    <div class="product_card_flex_1">
+                                        <p>
+                                            Задача организации, в особенности же
+                                            постоянное
+                                            информационно-пропагандистское
+                                            обеспечение нашей деятельности
+                                            требует определения и уточнения
+                                            экономической целесообразности
+                                            принимаемых решений! Идейные
+                                            соображения высшего порядка, а также
+                                            постоянный количественный рост и
+                                            сфера нашей активности, в своём
+                                            классическом представлении,
+                                            допускает внедрение экономической
+                                            целесообразности принимаемых
+                                            решений. В частности, граница
+                                            обучения кадров создаёт
+                                            необходимость включения в
+                                            производственный план целого ряда
+                                            внеочередных мероприятий с учётом
+                                            комплекса прогресса
+                                            профессионального сообщества.
+                                        </p>
+                                        <div class="logo"></div>
+                                    </div>
+                                    <div class="bottom_div">
+                                        <div class="person_div">
+                                            <div class="person"></div>
+                                            <p>Ваня Иванов</p>
+                                        </div>
+                                        <div class="arrow"></div>
+                                    </div>
+                                </div>
                             </button>
                             <button class="button_code_change" id="button2">
                                 Установить код 2

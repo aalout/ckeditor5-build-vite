@@ -117,17 +117,7 @@ const htmlCode4 = `
 
 const htmlCode5 = `
 <div class="product_card">
-    <div class="product_card_flex_1">
-        <p>kakaka/p>
-        <div class="logo"></div>
-    </div>
-    <div class="bottom_div">
-        <div class="person_div">
-            <div class="person"></div>
-            <p>Lera Ивановa</p>
-        </div>
-        <div class="arrow"></div>
-    </div>
+    <p class="text_edit">set</p>
 </div>`;
 
 export default class ProductCardPlugin extends Plugin {
@@ -139,17 +129,14 @@ export default class ProductCardPlugin extends Plugin {
             const button = new InsertProductCardButton(locale);
 
             button.on("execute", () => {
-                // Переменная с кодом, которая в будущем будет передаваться с бека и будет динамической
-
                 // Парсим из хтмл в представление модели
-                const viewFragment = editor.data.parse(htmlCode);
-                const position =
-                    editor.model.document.selection.getFirstPosition();
+                const viewFragment = editor.data.processor.toView(htmlCode);
+                const modelFragment = editor.data.toModel(viewFragment);
 
                 editor.model.change((writer) => {
-                    const element = writer.createElement("productCard");
-                    editor.model.insertContent(element, position);
-                    writer.append(viewFragment, element);
+                    const insertPosition =
+                        editor.model.document.selection.getFirstPosition();
+                    editor.model.insertContent(modelFragment, insertPosition);
                 });
             });
 
@@ -180,17 +167,37 @@ export default class ProductCardPlugin extends Plugin {
             model: "productCard",
             view: {
                 name: "div",
-                classes: "widget-container",
+                classes: "product_card",
             },
         });
 
         conversion.for("downcast").elementToElement({
             model: "productCard",
             view: (modelElement, { writer: viewWriter }) => {
-                const div = viewWriter.createContainerElement("section", {
-                    class: "widget-container",
+                const div = viewWriter.createContainerElement("div", {
+                    class: "product_card",
                 });
-                return toWidgetEditable(div, viewWriter, {
+                return toWidget(div, viewWriter, {
+                    label: "product card widget",
+                });
+            },
+        });
+
+        conversion.for("upcast").elementToElement({
+            model: "paragraph",
+            view: {
+                name: "p",
+                classes: "text_edit",
+            },
+        });
+
+        conversion.for("downcast").elementToElement({
+            model: "paragraph",
+            view: (modelElement, { writer: viewWriter }) => {
+                const p = viewWriter.createContainerElement("p", {
+                    class: "text_edit",
+                });
+                return toWidgetEditable(p, viewWriter, {
                     label: "product card widget",
                 });
             },
