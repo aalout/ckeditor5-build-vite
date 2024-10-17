@@ -9,6 +9,7 @@ import {
 import ChangeCellColorCommand from "./gridCell-color-change";
 import DeleteCellContentCommand from "./gridCell-content-delete";
 import MergeCellsCommand from "./gridCell-merge";
+import SetFlexCommand from "./gridColumn-set-flex";
 
 // Создание balloon context
 class SimpleFormView extends View {
@@ -20,6 +21,7 @@ class SimpleFormView extends View {
         this.changeColorButton = this._createColorChangeButton();
         this.deleteCellContentButton = this._deleteCellContentButton();
         this.createMergeCellButton = this._createMergeCellButton();
+        this.setFlexButton = this._createSetFlexButton();
 
         this.setTemplate({
             tag: "div",
@@ -29,6 +31,7 @@ class SimpleFormView extends View {
                 this.changeColorButton,
                 this.deleteCellContentButton,
                 this.createMergeCellButton,
+                this.setFlexButton,
             ],
         });
     }
@@ -46,6 +49,23 @@ class SimpleFormView extends View {
 
         button.on("execute", () => {
             this.fire("addColumn");
+        });
+
+        return button;
+    }
+
+    // Кнопка изменения flex значения
+    _createSetFlexButton() {
+        const button = new ButtonView();
+
+        button.set({
+            label: "Изменить flex значение",
+            withText: true,
+            tooltip: true,
+        });
+
+        button.on("execute", () => {
+            this.fire("setFlex");
         });
 
         return button;
@@ -113,7 +133,12 @@ class SimpleFormView extends View {
         });
 
         button.on("execute", () => {
-            this.fire("mergeCells");
+            const direction = prompt(
+                "Введите направление объединения (left, right, up, down):"
+            );
+            if (direction) {
+                this.fire("mergeCells", { direction });
+            }
         });
 
         return button;
@@ -126,7 +151,10 @@ export default class GridPlugin extends Plugin {
         const cells = Array.from(gridRow.getChildren());
 
         // Проверяем, есть ли объединенные ячейки
-        const anyMerged = cells.some((cell) => cell.hasAttribute("_isMerged"));
+        const anyMerged = cells.some(
+            (cell) =>
+                cell.hasAttribute("_isMerged") || cell.hasAttribute("rowspan")
+        );
 
         if (anyMerged) {
             // Логика для объединенных ячеек
@@ -180,10 +208,11 @@ export default class GridPlugin extends Plugin {
             });
         }
 
-        // Устанавливаем flex на основе текущего colspan
+        // Устанавливаем flex на основе текущего colspan и rowspan
         cells.forEach((cell) => {
             const colspan =
                 cell.getAttribute("colspan") || Math.floor(12 / cells.length);
+            const rowspan = cell.getAttribute("rowspan") || 1;
 
             const viewElement = this.editor.editing.mapper.toViewElement(cell);
             if (viewElement) {
@@ -214,13 +243,15 @@ export default class GridPlugin extends Plugin {
             isLimit: false,
             allowIn: "gridRow",
             allowContentOf: "$block",
-            allowAttributes: ["colspan", "backgroundColor"],
+            allowAttributes: ["colspan", "backgroundColor", "rowspan"],
         });
 
         editor.commands.add(
             "changeCellColor",
             new ChangeCellColorCommand(editor)
         );
+
+        editor.commands.add("setFlex", new SetFlexCommand(editor));
 
         editor.commands.add(
             "deleteCellContent",
@@ -261,22 +292,23 @@ export default class GridPlugin extends Plugin {
         this._setupListeners();
     }
 
-    // Даем понять balloon context`у понять, что если вставляем новую колонку, то вставляем ее справа от текущего gridCell, тоже самое с gridRow.
+    // Создание формы
     _createFormView() {
         const editor = this.editor;
         const formView = new SimpleFormView(editor.locale);
 
         // Объединение ячеек
-        this.listenTo(formView, "mergeCells", () => {
-            const direction = prompt(
-                "Введите направление объединения (left, right, up, down):"
-            );
+        this.listenTo(formView, "mergeCells", (evt, data) => {
+            const direction = data.direction;
 
-            if (direction) {
+            if (["left", "right", "up", "down"].includes(direction)) {
                 editor.execute("mergeCells", { direction });
-                // Удаляем неправильный вызов updateFlexValues с неопределенными переменными
-                // this.updateFlexValues(gridRow, writer);
+            } else {
+                alert(
+                    "Неверное направление объединения. Используйте left, right, up или down."
+                );
             }
+
             this._hideUI();
         });
 
@@ -290,13 +322,41 @@ export default class GridPlugin extends Plugin {
                 editor.model.change((writer) => {
                     const gridRow = gridCell.parent;
                     const newCell = writer.createElement("gridCell", {
-                        colspan: 12, // Временно устанавливаем, корректировка произойдет в updateFlexValues
+                        colspan: 12, // Изначальное
                     });
                     writer.insert(newCell, gridCell, "after");
 
                     // Обновляем flex значения, что также скорректирует colspan
                     this.updateFlexValues(gridRow, writer);
                 });
+            }
+
+            this._hideUI();
+        });
+
+        // Изменение flex значения
+        this.listenTo(formView, "setFlex", () => {
+            const selection = editor.model.document.selection;
+            const position = selection.getFirstPosition();
+            const gridCell = position.findAncestor("gridCell");
+
+            if (gridCell) {
+                const currentFlex = gridCell.getAttribute("colspan") || 1;
+                const newFlexInput = prompt(
+                    `Текущий flex: ${currentFlex}. Введите новое значение flex (максимум 12):`
+                );
+
+                const newFlex = parseInt(newFlexInput, 10);
+                if (!isNaN(newFlex) && newFlex > 0 && newFlex <= 12) {
+                    editor.execute("setFlex", {
+                        cell: gridCell,
+                        flex: newFlex,
+                    });
+                } else {
+                    alert(
+                        "Неверное значение flex. Пожалуйста, введите число от 1 до 12."
+                    );
+                }
             }
 
             this._hideUI();
@@ -340,7 +400,7 @@ export default class GridPlugin extends Plugin {
             this._hideUI();
         });
 
-        // При аутсайд клике закрываем balloon
+        // При клике вне закрываем balloon
         clickOutsideHandler({
             emitter: formView,
             activator: () => this._balloon.visibleView === formView,
@@ -351,7 +411,7 @@ export default class GridPlugin extends Plugin {
         return formView;
     }
 
-    // Даем balloon context`y понять, где мы сейчас находимся, получаем родителя (gridCell)
+    // Настройка слушателей
     _setupListeners() {
         const editor = this.editor;
         const viewDocument = editor.editing.view.document;
@@ -387,7 +447,7 @@ export default class GridPlugin extends Plugin {
         }
     }
 
-    // Отображение балуна
+    // Определение позиции балуна
     _getBalloonPositionData() {
         const view = this.editor.editing.view;
         const viewDocument = view.document;
@@ -437,6 +497,7 @@ export default class GridPlugin extends Plugin {
             model: "gridCell",
             view: (modelElement, { writer: viewWriter }) => {
                 const colspan = modelElement.getAttribute("colspan") || 1;
+                const rowspan = modelElement.getAttribute("rowspan") || 1;
                 const backgroundColor =
                     modelElement.getAttribute("backgroundColor") ||
                     "transparent";
@@ -464,6 +525,11 @@ export default class GridPlugin extends Plugin {
                 key: "style",
                 value: `flex: ${modelAttributeValue};`,
             }),
+        });
+
+        // Даункаст для атрибута rowspan
+        conversion.for("downcast").attributeToAttribute({
+            model: "rowspan",
         });
     }
 }

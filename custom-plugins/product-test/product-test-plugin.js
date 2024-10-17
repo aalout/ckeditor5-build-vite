@@ -1,10 +1,4 @@
-import {
-    ButtonView,
-    Plugin,
-    toWidget,
-    Widget,
-    toWidgetEditable,
-} from "ckeditor5";
+import { ButtonView, Plugin, toWidget, toWidgetEditable } from "ckeditor5";
 
 const button1 = document.getElementById("button1");
 const button2 = document.getElementById("button2");
@@ -57,8 +51,8 @@ function updateHtmlCode(newCode) {
 
 const htmlCode1 = `
 <div class="product_card">
-    <div class="product_card_flex_1">
-        <p>Задача организации, в особенности же постоянное информационно-пропагандистское обеспечение нашей деятельности требует определения и уточнения экономической целесообразности принимаемых решений! Идейные соображения высшего порядка, а также постоянный количественный рост и сфера нашей активности, в своём классическом представлении, допускает внедрение экономической целесообразности принимаемых решений. В частности, граница обучения кадров создаёт необходимость включения в производственный план целого ряда внеочередных мероприятий с учётом комплекса прогресса профессионального сообщества.</p>
+    <div class="product_card_content">
+        <p>Задача организации, в особенности же постоянное информационно-пропагандистское обеспечение нашей деятельности требует определения и уточнения экономической целесообразности принимаемых решений!</p>
         <div class="logo"></div>
     </div>
     <div class="bottom_div">
@@ -70,66 +64,21 @@ const htmlCode1 = `
     </div>
 </div>`;
 
-const htmlCode2 = `
-<div class="product_card">
-    <div class="product_card_flex_1">
-        <p>lalala</p>
-        <div class="logo"></div>
-    </div>
-    <div class="bottom_div">
-        <div class="person_div">
-            <div class="person"></div>
-            <p>Pipi Popo</p>
-        </div>
-        <div class="arrow"></div>
-    </div>
-</div>`;
-
-const htmlCode3 = `
-<div class="product_card">
-    <div class="product_card_flex_1">
-        <p>lalala</p>
-        <div class="logo"></div>
-    </div>
-    <div class="bottom_div">
-        <div class="person_div">
-            <div class="person"></div>
-            <p>Sanya Иванов</p>
-        </div>
-        <div class="arrow"></div>
-    </div>
-</div>`;
-
-const htmlCode4 = `
-<div class="product_card">
-    <div class="product_card_flex_1">
-        <p>GOYDA</p>
-        <div class="logo"></div>
-    </div>
-    <div class="bottom_div">
-        <div class="person_div">
-            <div class="person"></div>
-            <p>Ваня Oxlobistin</p>
-        </div>
-        <div class="arrow"></div>
-    </div>
-</div>`;
-
-const htmlCode5 = `
-<div class="product_card">
-    <p class="text_edit">set</p>
-</div>`;
+const htmlCode2 = `...`;
+const htmlCode3 = `...`;
+const htmlCode4 = `...`;
+const htmlCode5 = `...`;
 
 export default class ProductCardPlugin extends Plugin {
     init() {
         const editor = this.editor;
 
-        // Добавляем кнопку для запуска плагина
+        // Добавляем кнопку для вставки виджета
         editor.ui.componentFactory.add("InsertProductCardButton", (locale) => {
             const button = new InsertProductCardButton(locale);
 
             button.on("execute", () => {
-                // Парсим из хтмл в представление модели
+                // Парсим HTML в представление модели
                 const viewFragment = editor.data.processor.toView(htmlCode);
                 const modelFragment = editor.data.toModel(viewFragment);
 
@@ -147,15 +96,28 @@ export default class ProductCardPlugin extends Plugin {
         this._defineConverters();
     }
 
-    // Регистрируем элемент в схеме модели как блок + разрешаем использование productCard внутри грида
+    // Регистрируем элементы в схеме модели
     _defineSchema() {
         const schema = this.editor.model.schema;
 
+        // Регистрация элемента productCard как объекта
         schema.register("productCard", {
             isObject: true,
             allowWhere: "$block",
-            allowContentOf: "$root",
+            allowContentOf: "$block",
             allowIn: "gridCell",
+        });
+
+        // Регистрация элемента productCardContent как вложенного редактируемого блока внутри productCard
+        schema.register("productCardContent", {
+            isLimit: true,
+            allowWhere: "inside productCard",
+            allowContentOf: "$block", // Это позволяет содержать параграфы и другие блоковые элементы
+        });
+
+        // Дополнительная регистрация встроенных элементов, если необходимо
+        schema.extend("paragraph", {
+            allowIn: "productCardContent",
         });
     }
 
@@ -163,6 +125,35 @@ export default class ProductCardPlugin extends Plugin {
     _defineConverters() {
         const conversion = this.editor.conversion;
 
+        // Конвертер для создания виджета productCard из модели
+        conversion.for("downcast").elementToElement({
+            model: "productCard",
+            view: (modelElement, { writer: viewWriter }) => {
+                console.log("Downcast productCard");
+                const div = viewWriter.createContainerElement("div", {
+                    class: "product_card",
+                });
+
+                return toWidget(div, viewWriter, {
+                    label: "product card widget",
+                });
+            },
+        });
+
+        // Конвертер для создания редактируемой области внутри productCard
+        conversion.for("downcast").elementToElement({
+            model: "productCardContent",
+            view: (modelElement, { writer: viewWriter }) => {
+                console.log("Downcast productCardContent");
+                const div = viewWriter.createEditableElement("div", {
+                    class: "product_card_content",
+                });
+
+                return toWidgetEditable(div, viewWriter);
+            },
+        });
+
+        // Апкаст для productCard
         conversion.for("upcast").elementToElement({
             model: "productCard",
             view: {
@@ -171,35 +162,12 @@ export default class ProductCardPlugin extends Plugin {
             },
         });
 
-        conversion.for("downcast").elementToElement({
-            model: "productCard",
-            view: (modelElement, { writer: viewWriter }) => {
-                const div = viewWriter.createContainerElement("div", {
-                    class: "product_card",
-                });
-                return toWidget(div, viewWriter, {
-                    label: "product card widget",
-                });
-            },
-        });
-
+        // Апкаст для содержимого внутри productCard
         conversion.for("upcast").elementToElement({
-            model: "paragraph",
+            model: "productCardContent",
             view: {
-                name: "p",
-                classes: "text_edit",
-            },
-        });
-
-        conversion.for("downcast").elementToElement({
-            model: "paragraph",
-            view: (modelElement, { writer: viewWriter }) => {
-                const p = viewWriter.createContainerElement("p", {
-                    class: "text_edit",
-                });
-                return toWidgetEditable(p, viewWriter, {
-                    label: "product card widget",
-                });
+                name: "div",
+                classes: "product_card_content",
             },
         });
     }
